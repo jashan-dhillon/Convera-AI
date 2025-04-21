@@ -1,4 +1,4 @@
-## Convera AI
+# Convera AI
 
 Convera AI is a voice-driven conversational AI designed to create personalized AI agents tailored to user-specified professions and preferences. The system combines a client-side web interface for real-time voice interaction with a server-side backend powered by a lightweight language model (Mistral via Ollama). It leverages the Web Speech API for speech-to-text transcription and FastAPI for handling user queries, ensuring scalability and flexibility. This project demonstrates proficiency in data preprocessing, model integration, web development, and deployment, with a focus on privacy-conscious, customizable conversational AI deployable as a web application for professional use cases.
 
