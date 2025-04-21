@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up - Convera AI</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --primary-color: #BB86FC;
+      --secondary-color: #5790c5;
+      --accent-color: #CF6679;
+      --header-gradient: linear-gradient(135deg, #1E1E2F, #2A2A3D);
+      --nav-bg: #484876;
+      --container-bg: rgba(36,37,42,0.9);
+      --body-bg: linear-gradient(135deg, #1E1E2F, #12121F);
+      --text-color: #E0E0E0;
+      --card-shadow: 0 6px 12px rgba(0,0,0,0.5);
+      --highlight-color: #BB86FC;
+    }
+    body.light {
+      --primary-color: #4A90E2;
+      --secondary-color: #50E3C2;
+      --accent-color: #F5A623;
+      --header-gradient: linear-gradient(135deg, #4A90E2, #85e8d2);
+      --nav-bg: #f1f1f1;
+      --container-bg: #e5f5ff;
+      --body-bg: linear-gradient(135deg, #ECF0F1, #FFFFFF);
+      --text-color: #333333;
+      --card-shadow: 0 6px 12px rgba(0,0,0,0.1);
+      --highlight-color: #4A90E2;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: var(--body-bg);
+      color: var(--text-color);
+      transition: background 0.7s, color 0.7s;
+      overflow-x: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      top: -20%;
+      left: -20%;
+      width: 160%;
+      height: 160%;
+      background: radial-gradient(circle, rgba(255,255,255,0.3), transparent 60%);
+      opacity: 0.3;
+      border-radius: 50%;
+      transform: scale(1) rotate(0deg);
+      animation: swirl 30s linear infinite;
+      pointer-events: none;
+      z-index: -999;
+    }
+    @keyframes swirl {
+      0% { transform: scale(1) rotate(0deg); }
+      100% { transform: scale(1) rotate(360deg); }
+    }
+    body.light::before {
+      background: radial-gradient(circle, rgba(0,0,0,0.05), transparent 60%);
+    }
+
+    header {
+      background: var(--header-gradient);
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      animation: fadeDown 0.8s ease-out;
+    }
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .header-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    }
+    .header-icons {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+    .header-icons button {
+      background: var(--accent-color);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 20px;
+      text-decoration: none;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.3s, background 0.3s;
+    }
+    .header-icons button:hover {
+      background: var(--highlight-color);
+      transform: scale(1.08);
+    }
+
+    .login-container {
+      max-width: 400px;
+      width: 100%;
+      margin: auto;
+      padding: 30px;
+      background: var(--container-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: var(--card-shadow);
+      animation: containerFade 0.8s ease-out;
+    }
+    @keyframes containerFade {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .login-container h2 {
+      text-align: center;
+      color: var(--primary-color);
+      font-size: 28px;
+      margin-bottom: 20px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .login-form input {
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: rgba(255,255,255,0.1);
+      color: var(--text-color);
+      font-size: 16px;
+      transition: background 0.3s;
+    }
+    .login-form input:focus {
+      outline: none;
+      background: rgba(255,255,255,0.2);
+    }
+    .login-form button {
+      background: var(--accent-color);
+      color: #fff;
+      padding: 12px;
+      border-radius: 20px;
+      border: none;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .login-form button:hover {
+      background: var(--highlight-color);
+      transform: scale(1.05);
+    }
+    .login-form .error {
+      color: #ff4444;
+      font-size: 14px;
+      text-align: center;
+      display: none;
+    }
+    .signup-link {
+      text-align: center;
+      margin-top: 15px;
+    }
+    .signup-link a {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+    .signup-link a:hover {
+      color: var(--highlight-color);
+    }
+
+    footer {
+      background: var(--container-bg);
+      backdrop-filter: blur(10px);
+      padding: 20px 30px;
+      text-align: center;
+      box-shadow: var(--card-shadow);
+      margin-top: auto;
+      transition: background 0.5s;
+      animation: fadeIn 1s ease-out;
+    }
+    .footer-bottom {
+      font-size: 14px;
+      color: var(--text-color);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-title">Convera AI</div>
+    <div class="header-icons">
+      <button onclick="toggleDarkMode()">🌙</button>
+    </div>
+  </header>
+
+  <div class="login-container">
+    <h2>Sign Up</h2>
+    <form class="login-form" id="signupForm">
+      <input type="text" id="name" placeholder="Full Name" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
+      <div class="error" id="errorMessage">Registration failed</div>
+      <button type="submit">Sign Up</button>
+    </form>
+    <div class="signup-link">
+      Already have an account? <a href="login.html">Login</a>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-bottom">
+      © 2025 Convera AI. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    function toggleDarkMode() {
+      document.body.classList.toggle('light');
+    }
+
+    const signupForm = document.getElementById('signupForm');
+    const errorMessage = document.getElementById('errorMessage');
+
+    signupForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      if (!name || !email || !password || !confirmPassword) {
+        errorMessage.textContent = 'All fields are required';
+        errorMessage.style.display = 'block';
+        setTimeout(() => errorMessage.style.display = 'none', 3000);
+        return;
+      }
+
+      if (!isValidEmail(email)) {
+        errorMessage.textContent = 'Please enter a valid email address';
+        errorMessage.style.display = 'block';
+        setTimeout(() => errorMessage.style.display = 'none', 3000);
+        return;
+      }
+
+      if (password.length < 6) {
+        errorMessage.textContent = 'Password must be at least 6 characters';
+        errorMessage.style.display = 'block';
+        setTimeout(() => errorMessage.style.display = 'none', 3000);
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        errorMessage.textContent = 'Passwords do not match';
+        errorMessage.style.display = 'block';
+        setTimeout(() => errorMessage.style.display = 'none', 3000);
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password }),
+          credentials: 'include',
+        });
+
+        if (!response.ok) throw new Error('Signup failed');
+
+        const data = await response.json();
+        if (data.success) {
+          alert('Signup successful! Redirecting to login...');
+          window.location.href = 'index.html';
+        } else {
+          errorMessage.textContent = data.message || 'Registration failed';
+          errorMessage.style.display = 'block';
+          setTimeout(() => errorMessage.style.display = 'none', 3000);
+        }
+      } catch (error) {
+        errorMessage.textContent = 'An error occurred. Please try again.';
+        errorMessage.style.display = 'block';
+        setTimeout(() => errorMessage.style.display = 'none', 3000);
+        console.error('Signup error:', error);
+      }
+    });
+
+    function isValidEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+  </script>
+</body>
+</html>

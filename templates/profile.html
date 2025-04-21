@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile - Convera AI</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --primary-color: #BB86FC;         
+            --secondary-color: #5790c5;       
+            --accent-color: #CF6679;         
+            --header-gradient: linear-gradient(135deg, #1E1E2F, #2A2A3D);
+            --nav-bg: #484876;
+            --container-bg: rgba(36,37,42,0.9);
+            --body-bg: linear-gradient(135deg, #1E1E2F, #12121F);
+            --text-color: #E0E0E0;
+            --card-shadow: 0 6px 12px rgba(0,0,0,0.5);
+            --highlight-color: #BB86FC;
+        }
+        body.light {
+            --primary-color: #4A90E2;         
+            --secondary-color: #50E3C2;       
+            --accent-color: #F5A623;          
+            --header-gradient: linear-gradient(135deg, #4A90E2, #85e8d2);
+            --nav-bg: #f1f1f1;
+            --container-bg: #e5f5ff;
+            --body-bg: linear-gradient(135deg, #ECF0F1, #FFFFFF);
+            --text-color: #333333;
+            --card-shadow: 0 6px 12px rgba(0,0,0,0.1);
+            --highlight-color: #4A90E2;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--body-bg);
+            color: var(--text-color);
+            transition: background 0.7s, color 0.7s;
+            overflow-x: hidden;
+            position: relative;
+        }
+        body::before,
+        body::after {
+            content: '';
+            position: fixed;
+            top: -20%;
+            left: -20%;
+            width: 160%;
+            height: 160%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3), transparent 60%);
+            opacity: 0.3;
+            border-radius: 50%;
+            transform: scale(1) rotate(0deg);
+            animation: swirl 30s linear infinite;
+            pointer-events: none;
+            z-index: -999;
+        }
+        @keyframes swirl {
+            0% { transform: scale(1) rotate(0deg); }
+            100% { transform: scale(1) rotate(360deg); }
+        }
+        body.light::before,
+        body.light::after {
+            background: radial-gradient(circle, rgba(0,0,0,0.05), transparent 60%);
+        }
+
+        header {
+            background: var(--header-gradient);
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            animation: fadeDown 0.8s ease-out;
+        }
+        @keyframes fadeDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .header-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+        .header-icons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .header-icons button,
+        .header-icons a {
+            background: var(--accent-color);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.3s, background 0.3s;
+        }
+        .header-icons button:hover,
+        .header-icons a:hover {
+            background: var(--highlight-color);
+            transform: scale(1.08);
+        }
+        .bell-icon {
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        nav {
+            background: var(--nav-bg);
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            position: sticky;
+            top: 80px;
+            z-index: 90;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: background 0.5s;
+            animation: fadeIn 1s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        nav a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: background 0.3s, color 0.3s, transform 0.3s;
+            position: relative;
+        }
+        nav a:hover {
+            background: var(--primary-color);
+            color: #fff;
+            transform: translateY(-3px);
+        }
+
+        .profile-section {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 30px;
+            background: var(--container-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            animation: containerFade 0.8s ease-out;
+        }
+        @keyframes containerFade {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .profile-header h1 {
+            color: var(--primary-color);
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        .profile-header p {
+            font-size: 18px;
+            color: var(--text-color);
+        }
+        .profile-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .profile-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s, background 0.3s;
+            text-align: center;
+        }
+        body:not(.light) .profile-card {
+            background: #fff;
+            color: #333;
+        }
+        .profile-card:hover {
+            transform: scale(1.05);
+            background: #f7f7f7;
+        }
+        .profile-card h3 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            font-size: 24px;
+        }
+        .profile-card p {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .settings-form {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .settings-form label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: var(--text-color);
+        }
+        .settings-form input, .settings-form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid var(--text-color);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--text-color);
+            transition: border-color 0.3s;
+        }
+        .settings-form input:focus, .settings-form select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+        .settings-form button {
+            background: var(--accent-color);
+            color: #fff;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+        }
+        .settings-form button:hover {
+            background: var(--highlight-color);
+            transform: scale(1.05);
+        }
+
+        #backToTop {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            padding: 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            display: none;
+            transition: opacity 0.3s, background 0.3s;
+            z-index: 1000;
+        }
+        #backToTop:hover {
+            background: var(--accent-color);
+        }
+
+        footer {
+            background: var(--container-bg);
+            backdrop-filter: blur(10px);
+            padding: 40px 30px;
+            margin-top: 20px;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            transition: background 0.5s;
+            animation: fadeIn 1s ease-out;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .footer-section h3 {
+            font-size: 20px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        .footer-section ul li {
+            margin-bottom: 10px;
+        }
+        .footer-section ul li a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+        .footer-section ul li a:hover {
+            color: var(--highlight-color);
+        }
+        .footer-bottom {
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--text-color);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-title">Convera AI</div>
+        <div class="header-icons">
+            <button onclick="toggleDarkMode()">🌙</button>
+            <span class="bell-icon" onclick="showNotifications()">🔔</span>
+            <a href="login.html">Logout</a>
+        </div>
+    </header>
+
+    <nav>
+        <a href="landing_Page.html">Home</a>
+        <a href="index.html#product">Product</a>
+        <a href="index.html#use-cases">Use Cases</a>
+        <a href="index.html#pricing">Pricing</a>
+        <a href="login.html">Login</a>
+    </nav>
+
+    <div class="profile-section">
+        <div class="profile-header">
+            <h1>My Profile</h1>
+            <p>Manage your account and settings</p>
+        </div>
+        <div class="profile-details">
+            <div class="profile-card">
+                <h3>Personal Information</h3>
+                <p><strong>Name:</strong> Jashanpreet Kaur Dhillon</p>
+                <p><strong>Email:</strong> jashandhillon55200@gmail.com</p>
+                <p><strong>Joined:</strong> January 2023</p>
+            </div>
+            <div class="profile-card">
+                <h3>Subscription</h3>
+                <p><strong>Plan:</strong> Pro</p>
+                <p><strong>Status:</strong> Active</p>
+                <p><strong>Next Billing:</strong> December 2023</p>
+                <button onclick="upgradePlan()">Upgrade Plan</button>
+            </div>
+        </div>
+        <div class="settings-form">
+            <h3>Account Settings</h3>
+            <label for="username">Username:</label>
+            <input type="text" id="username" value="Jashanpreet Kaur Dhillon" />
+
+            <label for="email">Email:</label>
+            <input type="jashandhillon55200@gmail.com" id="email" value="jashandhillon55200@gmail.com" />
+
+            <label for="password">New Password:</label>
+            <input type="password" id="password" placeholder="Enter new password" />
+
+            <label for="theme">Theme Preference:</label>
+            <select id="theme" onchange="changeTheme()">
+                <option value="dark">Dark Mode</option>
+                <option value="light">Light Mode</option>
+            </select>
+
+            <button onclick="saveSettings()">Save Changes</button>
+        </div>
+    </div>
+
+    <button id="backToTop" onclick="scrollToTop()">⇧</button>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-section">
+                <h3>About Us</h3>
+                <ul>
+                    <li><a href="about.html">Our Story</a></li>
+                    <li><a href="team.html">Team</a></li>
+                    <li><a href="mission.html">Mission</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <ul>
+                    <li><a href="contact.html">Email Us</a></li>
+                    <li><a href="support.html">Support</a></li>
+                    <li><a href="faq.html">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Privacy Policy</h3>
+                <ul>
+                    <li><a href="privacy.html">Privacy Policy</a></li>
+                    <li><a href="terms.html">Terms of Service</a></li>
+                    <li><a href="cookies.html">Cookie Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Blog</h3>
+                <ul>
+                    <li><a href="blog.html">Latest Posts</a></li>
+                    <li><a href="updates.html">Product Updates</a></li>
+                    <li><a href="tutorials.html">Tutorials</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2025 Convera AI. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        function toggleDarkMode() {
+            document.body.classList.toggle('light');
+        }
+
+        function showNotifications() {
+            alert('No new notifications');
+        }
+
+        const backToTopBtn = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            backToTopBtn.style.display = window.pageYOffset > 300 ? 'block' : 'none';
+        });
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function upgradePlan() {
+            alert('Upgrade to a higher plan now!');
+            // Add logic to redirect or open a modal for upgrading
+        }
+
+        function saveSettings() {
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            alert('Settings saved!\nUsername: ' + username + '\nEmail: ' + email + '\nPassword changed: ' + (password ? 'Yes' : 'No'));
+            // Here you would typically send this data to a server via AJAX/Fetch API
+        }
+
+        function changeTheme() {
+            const theme = document.getElementById('theme').value;
+            if (theme === 'light') {
+                document.body.classList.add('light');
+            } else {
+                document.body.classList.remove('light');
+            }
+        }
+
+        // Initial check for theme preference (you can store this in localStorage for persistence)
+        document.getElementById('theme').value = document.body.classList.contains('light') ? 'light' : 'dark';
+    </script>
+</body>
+</html>

@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Convera AI</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --primary-color: #BB86FC;         
+      --secondary-color: #5790c5;       
+      --accent-color: #CF6679;         
+      --header-gradient: linear-gradient(135deg, #1E1E2F, #2A2A3D);
+      --nav-bg: #484876;
+      --container-bg: rgba(36,37,42,0.9);
+      --body-bg: linear-gradient(135deg, #1E1E2F, #12121F);
+      --text-color: #E0E0E0;
+      --card-shadow: 0 6px 12px rgba(0,0,0,0.5);
+      --highlight-color: #BB86FC;
+    }
+    body.light {
+      --primary-color: #4A90E2;         
+      --secondary-color: #50E3C2;       
+      --accent-color: #F5A623;          
+      --header-gradient: linear-gradient(135deg, #4A90E2, #85e8d2);
+      --nav-bg: #f1f1f1;
+      --container-bg: #e5f5ff;
+      --body-bg: linear-gradient(135deg, #ECF0F1, #FFFFFF);
+      --text-color: #333333;
+      --card-shadow: 0 6px 12px rgba(0,0,0,0.1);
+      --highlight-color: #4A90E2;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: var(--body-bg);
+      color: var(--text-color);
+      transition: background 0.7s, color 0.7s;
+      overflow-x: hidden;
+      position: relative;
+    }
+    body::before,
+    body::after {
+      content: '';
+      position: fixed;
+      top: -20%;
+      left: -20%;
+      width: 160%;
+      height: 160%;
+      background: radial-gradient(circle, rgba(255,255,255,0.3), transparent 60%);
+      opacity: 0.3;
+      border-radius: 50%;
+      transform: scale(1) rotate(0deg);
+      animation: swirl 30s linear infinite;
+      pointer-events: none;
+      z-index: -999;
+    }
+    @keyframes swirl {
+      0% { transform: scale(1) rotate(0deg); }
+      100% { transform: scale(1) rotate(360deg); }
+    }
+    body.light::before,
+    body.light::after {
+      background: radial-gradient(circle, rgba(0,0,0,0.05), transparent 60%);
+    }
+
+    header {
+      background: var(--header-gradient);
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      animation: fadeDown 0.8s ease-out;
+    }
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .header-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    }
+    .header-icons {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+    .header-icons button,
+    .header-icons a {
+      background: var(--accent-color);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 20px;
+      text-decoration: none;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.3s, background 0.3s;
+    }
+    .header-icons button:hover,
+    .header-icons a:hover {
+      background: var(--highlight-color);
+      transform: scale(1.08);
+    }
+    .header-icons button.get-started {
+      background: #34C759;
+    }
+    .header-icons button.get-started:hover {
+      background: #2DB84C;
+    }
+    .bell-icon {
+      font-size: 24px;
+      cursor: pointer;
+      padding: 8px;
+    }
+
+    nav {
+      background: var(--nav-bg);
+      padding: 15px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      position: sticky;
+      top: 80px;
+      z-index: 90;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: background 0.5s;
+      animation: fadeIn 1s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    nav a {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-size: 18px;
+      font-weight: 500;
+      padding: 10px 20px;
+      border-radius: 8px;
+      transition: background 0.3s, color 0.3s, transform 0.3s;
+      position: relative;
+    }
+    nav a:hover {
+      background: var(--primary-color);
+      color: #fff;
+      transform: translateY(-3px);
+    }
+
+    .hero-section {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 60px 30px;
+      max-width: 1200px;
+      margin: 20px auto;
+      border-radius: 20px;
+      background: var(--container-bg);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--card-shadow);
+      animation: containerFade 0.8s ease-out;
+    }
+    @keyframes containerFade {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hero-text {
+      max-width: 600px;
+    }
+    .hero-text h1 {
+      font-size: 36px;
+      color: var(--primary-color);
+      margin-bottom: 10px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.15);
+    }
+    .hero-text h1:nth-child(2) {
+      margin-left: 300px;
+      display: inline-flex;
+      align-items: center;
+    }
+    .hero-text p {
+      font-size: 18px;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    .hero-btn {
+      display: inline-block;
+      background: var(--accent-color);
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 20px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .hero-btn:hover {
+      background: var(--highlight-color);
+      transform: scale(1.05);
+    }
+
+    /* AI Avatar with Loading Animation */
+    .avatar-container {
+      position: relative;
+      max-width: 400px;
+      width: 100%;
+      height: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .ai-avatar {
+      width: 300px;
+      height: auto;
+      animation: takeAvatar 1.5s ease-in forwards, bounce 1.5s infinite ease-in-out 1.5s;
+    }
+    @keyframes takeAvatar {
+      0% {
+        opacity: 0;
+        transform: scale(0.5) translateY(20px);
+        filter: blur(5px);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+        filter: blur(0);
+      }
+    }
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+    .loading-spinner {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      border: 5px solid rgba(255, 255, 255, 0.3);
+      border-top: 5px solid var(--primary-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      top: 20%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 1;
+      transition: opacity 0.5s ease-out;
+    }
+    .loading-spinner.hide {
+      opacity: 0;
+    }
+    @keyframes spin {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    .sequential-scroll {
+      display: inline-block;
+      position: relative;
+      width: 300px; 
+      height: 50px; 
+      overflow: hidden;
+      line-height: 50px; 
+      vertical-align: middle;
+    }
+
+    .sequential-scroll span {
+      display: block;
+      position: absolute;
+      top: 100%; 
+      left: 0;
+      width: 100%;
+      text-align: left; 
+      animation: sequentialVerticalScroll 9s infinite ease-in-out;
+      opacity: 1;
+      white-space: nowrap;
+      font-size: 36px; 
+      color: var(--primary-color); 
+      background: linear-gradient(135deg, var(--accent-color,#4CAF50),var(--primary-color, #007bff));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    @keyframes sequentialVerticalScroll {
+      0% { top: 100%; opacity: 0; } 
+      10% { top: 0; opacity: 1; } 
+      30% { top: 0; opacity: 1; } 
+      40% { top: -100%; opacity: 0; } 
+      100% { top: -100%; opacity: 0; } 
+    }
+
+    .sequential-scroll span:nth-child(2) {
+      animation-delay: 3s; 
+    }
+
+    .sequential-scroll span:nth-child(3) {
+      animation-delay: 6s; 
+    }
+
+    .features-section {
+      margin: 20px auto;
+      max-width: 1200px;
+      padding: 30px;
+      background: var(--container-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: var(--card-shadow);
+      animation: containerFade 0.8s ease-out;
+      transition: background 0.5s, box-shadow 0.5s;
+    }
+    .features-section h2 {
+      margin-bottom: 20px;
+      text-align: center;
+      color: var(--primary-color);
+      font-size: 28px;
+      letter-spacing: 1px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .feature-card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.3s, background 0.3s;
+      text-align: center;
+      clip-path: polygon(10% 0%, 90% 0%, 100% 25%, 100% 75%, 90% 100%, 10% 100%, 0% 75%, 0% 25%);
+    }
+    body:not(.dark) .feature-card {
+      background: #fff;
+      color: #333;
+    }
+    .feature-card:hover {
+      transform: scale(1.05);
+      background: #f7f7f7;
+    }
+    .feature-card h3 {
+      margin-bottom: 10px;
+      color: inherit;
+      font-size: 20px;
+    }
+    .feature-card p {
+      color: inherit;
+      font-size: 16px;
+    }
+
+    .platform-section {
+      margin: 20px auto;
+      max-width: 1200px;
+      padding: 30px;
+      background: var(--container-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: var(--card-shadow);
+      animation: containerFade 0.8s ease-out;
+      transition: background 0.5s, box-shadow 0.5s;
+    }
+    .platform-section h2 {
+      margin-bottom: 20px;
+      text-align: center;
+      color: var(--primary-color);
+      font-size: 28px;
+      letter-spacing: 1px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+    .platform-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .platform-card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.3s, background 0.3s;
+      text-align: center;
+    }
+    body:not(.dark) .platform-card {
+      background: #fff;
+      color: #333;
+    }
+    .platform-card:hover {
+      transform: scale(1.05);
+      background: #f7f7f7;
+    }
+    .platform-card h3 {
+      margin-bottom: 10px;
+      color: inherit;
+      font-size: 20px;
+    }
+    .platform-card p {
+      color: inherit;
+      font-size: 16px;
+    }
+
+    .pricing-section {
+      margin: 20px auto;
+      max-width: 1200px;
+      padding: 30px;
+      background: var(--container-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: var(--card-shadow);
+      animation: containerFade 0.8s ease-out;
+      transition: background 0.5s, box-shadow 0.5s;
+    }
+    .pricing-section h2 {
+      margin-bottom: 20px;
+      text-align: center;
+      color: var(--primary-color);
+      font-size: 28px;
+      letter-spacing: 1px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    @media (min-width: 768px) {
+      .pricing-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      }
+    }
+    .pricing-card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.3s, background 0.3s;
+      text-align: center;
+      height: 100%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    body:not(.dark) .pricing-card {
+      background: #fff;
+      color: #333;
+    }
+    .pricing-card:hover {
+      transform: scale(1.05);
+      background: #f7f7f7;
+    }
+    .pricing-card h3 {
+      margin-bottom: 10px;
+      color: inherit;
+      font-size: 20px;
+    }
+    .pricing-card .price {
+      font-size: 24px;
+      color: var(--accent-color);
+      margin-bottom: 15px;
+    }
+    .pricing-card ul {
+      list-style: none;
+      padding: 0;
+      text-align: left;
+      flex-grow: 1;
+    }
+    .pricing-card ul li {
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+    }
+    .pricing-card ul li .tick {
+      color: green;
+      margin-right: 8px;
+      font-size: 16px;
+    }
+    .pricing-card ul li .cross {
+      color: red;
+      margin-right: 8px;
+      font-size: 16px;
+    }
+    .pricing-card .get-started-btn {
+      display: inline-block;
+      background: #34C759;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 20px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background 0.3s, transform 0.3s;
+      margin-top: 15px;
+    }
+    .pricing-card .get-started-btn:hover {
+      background: #2DB84C;
+      transform: scale(1.05);
+    }
+    .pricing-card .most-popular {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: #34C759;
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    #backToTop {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--primary-color);
+      color: #fff;
+      border: none;
+      padding: 15px;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      display: none;
+      transition: opacity 0.3s, background 0.3s;
+      z-index: 1000;
+    }
+    #backToTop:hover {
+      background: var(--accent-color);
+    }
+
+    footer {
+      background: var(--container-bg);
+      backdrop-filter: blur(10px);
+      padding: 40px 30px;
+      margin-top: 20px;
+      text-align: center;
+      box-shadow: var(--card-shadow);
+      transition: background 0.5s;
+      animation: fadeIn 1s ease-out;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .footer-section h3 {
+      font-size: 20px;
+      color: var(--primary-color);
+      margin-bottom: 15px;
+    }
+    .footer-section ul {
+      list-style: none;
+      padding: 0;
+    }
+    .footer-section ul li {
+      margin-bottom: 10px;
+    }
+    .footer-section ul li a {
+      color: var(--text-color);
+      text-decoration: none;
+      font-size: 16px;
+      transition: color 0.3s;
+    }
+    .footer-section ul li a:hover {
+      color: var(--highlight-color);
+    }
+    .footer-bottom {
+      margin-top: 20px;
+      font-size: 14px;
+      color: var(--text-color);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-title">Convera AI</div>
+    <div class="header-icons">
+      <button onclick="toggleDarkMode()">🌙</button>
+      <span class="bell-icon" onclick="showNotifications()">🔔</span>
+      <a href="profile.html">Profile</a>
+    </div>
+  </header>
+
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#product">Product</a>
+    <a href="#use-cases">Use Case</a>
+    <a href="#pricing">Pricing</a>
+    <a href="login.html">Login</a>
+  </nav>
+
+  <div class="hero-section" id="home">
+    <div class="hero-text">
+      <h1>Build Smarter AI Agents</h1>
+      <div>
+        <h1 style="margin-left: 120px;">—Just by <span class="sequential-scroll"></span></h1>
+      </div>
+      <p>
+        Skip the forms, let your voice shape your AI. Curate knowledge and train intelligent agents with ease.
+      </p>
+      <a href="pipo.html" class="hero-btn">Try it for Free</a>
+    </div>
+    <div class="avatar-container">
+      <img src="Ai bot.png" alt="Cute AI Avatar Loading" class="ai-avatar">
+      <div class="loading-spinner"></div>
+    </div>
+  </div>
+
+  <div class="platform-section" id="product">
+    <h2>What Does Our Platform Do?</h2>
+    <div class="platform-grid">
+      <div class="platform-card">
+        <h3>Conversational Intelligence</h3>
+        <p>Talk to our system like you would to a colleague. It adapts in real time to your answers, asking right follow ups to capture what your agent need goal, constraints, workflow and tone.</p>
+      </div>
+      <div class="platform-card">
+        <h3>Automated Knowledge Base Builder</h3>
+        <p>No more manual formatting or writing documents. We convert yours conversation into a clean , structured knowledge base - tailored for direct use in low-code AI platform like flowise, langchain or relevance AI.</p>
+      </div>
+      <div class="platform-card">
+        <h3>Agent - Ready Output</h3>
+        <p>You bring the ideas - we handle rest. Export your knowledge base in multiple formats(JSON, Markdown,etc) or push it directly into your favourite agent builder.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="features-section" id="use-cases">
+    <h2>Use Cases</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">⚖</div>
+        <h3>Legal assistant</h3> 
+        <p>Generates, draft, summarize legal document.</p>
+        <p style="color: #CF6679;">-by law firms</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🍎🏋</div>
+        <h3>Diet Advisor</h3>
+        <p>Tracks meals, activity, goals and advices based on that.</p>
+        <p style="color: #CF6679;">-by health coach/wellness startups</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">👥📄</div>
+        <h3>HR assistant</h3>
+        <p>FAQ bot tailored to your policies, workflow, and benefits.</p>
+        <p style="color: #CF6679;">-by HR</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎓💡</div>
+        <h3>Tutor</h3>
+        <p>Turn your learning goals, and helps students 24/7.</p>
+        <p style="color: #CF6679;">-by Teachers</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🚀💬</div>
+        <h3>Startup founder</h3>
+        <p>Extracts core features, flows, and positioning to fuel your support bot or AI demo.</p>
+        <p style="color: #CF6679;">-by Founder</p>
+      </div>
+    </div>
+  </div>
+
+  <button id="backToTop" onclick="scrollToTop()">⇧</button>
+
+  <div class="pricing-section" id="pricing">
+    <h2>Public Pricing</h2>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <h3>Free Tier</h3>
+        <div class="price">$0</div>
+        <p>Budget for early testers and individual use.</p>
+        <ul>
+          <li class="price">Includes</li>
+          <li><span class="tick">✔</span> 1 Voice interviews (30 mins)</li>
+          <li><span class="tick">✔</span> 2 Voice interviews (15 mins)</li>
+          <li><span class="tick">✔</span> Auto-generated knowledge base (Json)</li>
+          <li><span class="tick">✔</span> 2 Auto-generated Agent</li>
+          <li><span class="cross">✘</span> Export in other Formats</li>
+          <li><span class="cross">✘</span> API integration</li>
+        </ul>
+        <a href="pipo.html" class="get-started-btn">Get Started</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="pricing-section">
+    <h2>Private Pricing</h2>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="most-popular">Most Popular</div>
+        <h3>Mini</h3>
+        <div class="price">$30 /month</div>
+        <p>For power users looking to leverage AI capabilities.</p>
+        <ul>
+          <li class="price">Includes</li>
+          <li><span class="tick">✔</span> 2 Voice interviews (30 mins)</li>
+          <li><span class="tick">✔</span> 3 Voice interviews (15 mins)</li>
+          <li><span class="tick">✔</span> Auto-generated knowledge base (JSON)</li>
+          <li><span class="tick">✔</span> 5 Auto-generated Agents</li>
+          <li><span class="tick">✔</span> Export in other Formats</li>
+          <li><span class="cross">✘</span> API integration</li>
+        </ul>
+        <a href="#" class="get-started-btn">Get Started</a>
+      </div>
+      <div class="pricing-card">
+        <h3>Pro</h3>
+        <div class="price">$180 /month</div>
+        <p>For developers building AI companies/automations.</p>
+        <ul>
+          <li class="price">Includes</li>
+          <li><span class="tick">✔</span> Unlimited Voice interviews (up to 30 mins each)</li>
+          <li><span class="tick">✔</span> Unlimited Voice interviews (15 mins)</li>
+          <li><span class="tick">✔</span> Auto-generated knowledge base (JSON)</li>
+          <li><span class="tick">✔</span> Unlimited Auto-generated Agents</li>
+          <li><span class="tick">✔</span> Export in other Formats</li>
+          <li><span class="tick">✔</span> API integration</li>
+        </ul>
+        <a href="#" class="get-started-btn">Get Started</a>
+      </div>
+      <div class="pricing-card">
+        <h3>Custom</h3>
+        <div class="price">$399 /month</div>
+        <p>For enterprises with large workforce.</p>
+        <ul>
+          <li class="price">Includes</li>
+          <li><span class="tick">✔</span> Fully Personalized Voice Interviews (Custom duration)</li>
+          <li><span class="tick">✔</span> Unlimited Interviews with Adaptive Logic</li>
+          <li><span class="tick">✔</span> Customized Knowledge Base Formats & Schemas</li>
+          <li><span class="tick">✔</span> Unlimited Agents with Deep Personalization</li>
+          <li><span class="tick">✔</span> Export in Any Format + Direct DB Integration</li>
+          <li><span class="tick">✔</span> API Integration + Webhooks + Advanced Access</li>
+        </ul>
+        <a href="#" class="get-started-btn">Get Started</a>
+      </div>
+    </div>
+  </div>
+
+  <footer id="login">
+    <div class="footer-grid">
+      <div class="footer-section">
+        <h3>About Us</h3>
+        <ul>
+          <li><a href="./about.html">Our Story</a></li>
+          <li><a href="./team.html">Team</a></li>
+          <li><a href="./mission.html">Mission</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Contact Us</h3>
+        <ul>
+          <li><a href="./contact.html">Email Us</a></li>
+          <li><a href="./support.html">Support</a></li>
+          <li><a href="./faq.html">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Privacy Policy</h3>
+        <ul>
+          <li><a href="./privacy.html">Privacy Policy</a></li>
+          <li><a href="./terms.html">Terms of Service</a></li>
+          <li><a href="./cookies.html">Cookie Policy</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Blog</h3>
+        <ul>
+          <li><a href="./blog.html">Latest Posts</a></li>
+          <li><a href="./updates.html">Product Updates</a></li>
+          <li><a href="./tutorials.html">Tutorials</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      ©️ 2025 Convera AI. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    function toggleDarkMode() {
+      document.body.classList.toggle('light');
+    }
+
+    function showNotifications() {
+      alert('No new notifications');
+    }
+
+    const backToTopBtn = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+      backToTopBtn.style.display = window.pageYOffset > 300 ? 'block' : 'none';
+    });
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.querySelectorAll('nav a').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        if (this.getAttribute('href').startsWith('#')) {
+          e.preventDefault();
+          const targetId = this.getAttribute('href').substring(1);
+          const targetElement = document.getElementById(targetId);
+          if (targetElement) {
+            targetElement.scrollIntoView({ behavior: 'smooth' });
+          }
+        }
+      });
+    });
+
+    const words = ["talking!", "conversating!", "discussing!"];
+    const sequentialScroll = document.querySelector(".sequential-scroll");
+
+    words.forEach(word => {
+      const span = document.createElement("span");
+      span.textContent = word;
+      span.style.background = "linear-gradient(135deg, var(--accent-color,#4CAF50),var(--primary-color, #007bff))";
+      span.style.webkitBackgroundClip = "text";
+      span.style.webkitTextFillColor = "transparent";
+      span.style.display = "inline-block";
+      span.style.marginRight = "10px";
+      sequentialScroll.appendChild(span);
+    });
+
+    // Hide the loading spinner after the "takeAvatar" animation completes
+    setTimeout(() => {
+      document.querySelector('.loading-spinner').classList.add('hide');
+    }, 1500); // Matches the duration of the takeAvatar animation
+  </script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "profession": "Assistant Professor",
+  "preferences": {
+    "skills": ["History", "Civics"],
+    "tone": "friendly and brainstorming"
+  },
+  "metadata": {
+    "experience_level": "intermediate",
+    "domain": "Academia"
+  }
+}

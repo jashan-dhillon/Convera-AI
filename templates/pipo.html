@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Convera AI</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet"/>
+  <style>
+    .ai-bot-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      height: 100%;
+      padding-left: 20px;
+    }
+    .bot-wrapper {
+      position: relative;
+    }
+    .ai-bot {
+      transition: transform 0.3s ease;
+      animation: bounce 2s infinite ease-in-out;
+    }
+    .waving-arm {
+      transform-origin: center;
+      animation: wave 1.5s infinite ease-in-out;
+    }
+    @keyframes wave {
+      0% { transform: rotate(-20deg); }
+      50% { transform: rotate(20deg); }
+      100% { transform: rotate(-20deg); }
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .ai-bot:hover {
+      transform: scale(1.1);
+    }
+    .transcript-text {
+      margin-top: 20px;
+      font-size: 18px;
+      color: var(--text-color);
+      white-space: pre-wrap;
+      overflow: hidden;
+      display: inline-block;
+      width: 0;
+      animation: typing 5s steps(60, end) forwards;
+    }
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+    :root {
+      --primary-color: #BB86FC;         
+      --secondary-color: #5790c5;       
+      --accent-color: #CF6679;         
+      --header-gradient: linear-gradient(135deg, #1E1E2F, #2A2A3D);
+      --nav-bg: #484876;
+      --container-bg: rgba(36,37,42,0.9);
+      --body-bg: linear-gradient(135deg, #1E1E2F, #12121F);
+      --text-color: #E0E0E0;
+      --card-shadow: 0 6px 12px rgba(0,0,0,0.5);
+      --highlight-color: #BB86FC;
+    }
+    body.light {
+      --primary-color: #4A90E2;         
+      --secondary-color: #50E3C2;       
+      --accent-color: #F5A623;          
+      --header-gradient: linear-gradient(135deg, #4A90E2, #85e8d2);
+      --nav-bg: #f1f1f1;
+      --container-bg: #e5f5ff;
+      --body-bg: linear-gradient(135deg, #ECF0F1, #FFFFFF);
+      --text-color: #333333;
+      --card-shadow: 0 6px 12px rgba(0,0,0,0.1);
+      --highlight-color: #4A90E2;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: var(--body-bg);
+      color: var(--text-color);
+      transition: background 0.7s, color 0.7s;
+      overflow-x: hidden;
+      position: relative;
+    }
+    body::before,
+    body::after {
+      content: '';
+      position: fixed;
+      top: -20%;
+      left: -20%;
+      width: 160%;
+      height: 160%;
+      background: radial-gradient(circle, rgba(255,255,255,0.3), transparent 60%);
+      opacity: 0.3;
+      border-radius: 50%;
+      transform: scale(1) rotate(0deg);
+      animation: swirl 30s linear infinite;
+      pointer-events: none;
+      z-index: -999;
+    }
+    @keyframes swirl {
+      0% { transform: scale(1) rotate(0deg); }
+      100% { transform: scale(1) rotate(360deg); }
+    }
+    body.light::before,
+    body.light::after {
+      background: radial-gradient(circle, rgba(0,0,0,0.05), transparent 60%);
+    }
+    header {
+      background: var(--header-gradient);
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      animation: fadeDown 0.8s ease-out;
+    }
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .header-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    }
+    .header-icons {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+    .header-icons button,
+    .header-icons a {
+      background: var(--accent-color);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 20px;
+      text-decoration: none;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.3s, background 0.3s;
+    }
+    .header-icons button:hover,
+    .header-icons a:hover {
+      background: var(--highlight-color);
+      transform: scale(1.08);
+    }
+    .bell-icon {
+      font-size: 24px;
+      cursor: pointer;
+      padding: 8px;
+    }
+    nav {
+      background: var(--nav-bg);
+      padding: 15px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      position: sticky;
+      top: 80px;
+      z-index: 90;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: background 0.5s;
+      animation: fadeIn 1s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    nav a {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-size: 18px;
+      font-weight: 500;
+      padding: 10px 20px;
+      border-radius: 8px;
+      transition: background 0.3s, color 0.3s, transform 0.3s;
+      position: relative;
+    }
+    nav a:hover {
+      background: var(--primary-color);
+      color: #fff;
+      transform: translateY(-3px);
+    }
+    .hero-section {
+      padding: 30px;
+      max-width: 1200px;
+      margin: 20px auto;
+      border-radius: 20px;
+      background: var(--container-bg);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--card-shadow);
+      animation: containerFade 0.8s ease-out;
+    }
+    @keyframes containerFade {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .chat-box {
+      height: 300px;
+      overflow-y: auto;
+      padding: 15px;
+      border-radius: 10px;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.15));
+      border: 1px solid var(--primary-color);
+      position: relative;
+    }
+    .chat-message {
+      margin-bottom: 15px;
+      padding: 10px 15px;
+      border-radius: 10px;
+      max-width: 70%;
+      word-wrap: break-word;
+    }
+    .user-message {
+      background: var(--primary-color);
+      color: #fff;
+      align-self: flex-end;
+      margin-left: auto;
+    }
+    .ai-message {
+      background: var(--secondary-color);
+      color: #fff;
+      align-self: flex-start;
+      margin-right: auto;
+    }
+    .controls {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+    .control-btn {
+      background: var(--accent-color);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 20px;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .control-btn:hover {
+      background: var(--highlight-color);
+      transform: scale(1.05);
+    }
+    .control-btn.recording {
+      background: #f44336;
+    }
+    .control-btn:disabled {
+      background: #666;
+      cursor: not-allowed;
+    }
+    .persistent-controls {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 20px;
+  }
+
+    #status {
+      text-align: center;
+      font-size: 16px;
+      color: var(--text-color);
+    }
+    footer {
+      background: var(--nav-bg);
+      padding: 20px;
+      text-align: center;
+      color: var(--text-color);
+      position: relative;
+      bottom: 0;
+      width: 100%;
+      box-shadow: 0 -4px 6px rgba(0,0,0,0.1);
+      transition: background 0.5s;
+    }
+    footer p {
+      font-size: 14px;
+    }
+    .end-controls {
+      display: none;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .end-btn {
+      background: var(--accent-color);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 20px;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .end-btn:hover {
+      background: var(--highlight-color);
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-title">Convera AI</div>
+    <div class="header-icons">
+      <button onclick="toggleDarkMode()">🌙</button>
+      <span class="bell-icon" onclick="showNotifications()">🔔</span>
+      <a href="profile.html">Profile</a>
+    </div>
+  </header>
+
+  <nav>
+    <a href="hackaccino/landing_page.html">Home</a>
+    <a href="./train.html">Product</a>
+    <a href="./knowledge.html">Use Case</a>
+    <a href="./support.html">Pricing</a>
+    <a href="./login.html">Login</a>
+  </nav>
+
+  <div class="hero-section">
+    <div class="chat-container">
+      <div class="chat-box" id="chatBox">
+        <div class="ai-bot-container" id="botContainer">
+          <div class="bot-wrapper">
+            <svg class="ai-bot" width="150" height="150" viewBox="0 0 100 100">
+              <circle cx="50" cy="55" r="35" fill="rgba(255, 255, 255, 0.2)" />
+              <ellipse cx="50" cy="55" rx="30" ry="25" fill="#fff" />
+              <path d="M 50 30 Q 45 20 40 30 Q 50 25 50 30 Q 55 20 60 30 Q 50 25 50 30" fill="#4CAF50" />
+              <circle cx="40" cy="50" r="3" fill="#000" />
+              <circle cx="60" cy="50" r="3" fill="#000" />
+              <path d="M 40 60 Q 50 65 60 60" fill="none" stroke="#000" stroke-width="2" />
+              <ellipse cx="25" cy="55" rx="10" ry="5" fill="#fff" class="waving-arm" />
+              <ellipse cx="75" cy="55" rx="10" ry="5" fill="#fff" />
+              <ellipse cx="40" cy="80" rx="5" ry="10" fill="#fff" />
+              <ellipse cx="60" cy="80" rx="5" ry="10" fill="#fff" />
+            </svg>
+          </div>
+          <div class="transcript-text" id="transcriptText"></div>
+        </div>
+      </div>
+      <div class="controls">
+        <button class="control-btn" id="startBtn">Start</button>
+        <button class="control-btn" id="stopBtn" disabled>Stop</button>
+      </div>
+      <div class="end-controls" id="endControls">
+        <button class="end-btn" id="continueBtn">Continue Conversation</button>
+        <button class="end-btn" id="saveBtn">Export Knowledge Base</button>
+        <!-- <button class="end-btn" id="generateAgentBtn">Generate Agent</button> -->
+      </div>
+      <!-- Persistent Generate Agent button container -->
+      <div class="persistent-controls" id="persistentControls" style="display: none;">
+        <a href="http://127.0.0.1:8000/"><button class="end-btn" id="persistentGenerateAgentBtn">Generate Agent</button></a>
+      </div>
+      
+      <p id="status">Press "Start" to begin recording.</p>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Convera AI. All rights reserved.</p>
+  </footer>
+
+  
+  <script>
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const continueBtn = document.getElementById('continueBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const generateAgentBtn = document.getElementById('generateAgentBtn'); // New button in endControls
+    const persistentGenerateAgentBtn = document.getElementById('persistentGenerateAgentBtn'); // Persistent button
+    const chatBox = document.getElementById('chatBox');
+    const botContainer = document.getElementById('botContainer');
+    const transcriptText = document.getElementById('transcriptText');
+    const status = document.getElementById('status');
+    const endControls = document.getElementById('endControls');
+    const persistentControls = document.getElementById('persistentControls'); // Persistent container
+    let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    let isRecording = false;
+    let conversationState = 'initial';
+    let conversationComplete = false;
+    let hasGeneratedAgentButton = false; // Track if the persistent button has been shown
+  
+    // Generic knowledge base
+    let knowledgeBase = {
+      agentType: null,
+      context: null,
+      details: {}
+    };
+  
+    // Initial welcome message
+    const welcomeText = "Hi, I’m Pippo, your assistant. What type of AI agent would you like to build? Tell me as much as you can, and I’ll listen until you’re done.";
+    let index = 0;
+  
+    function typeWriter() {
+      if (index < welcomeText.length) {
+        transcriptText.textContent += welcomeText.charAt(index);
+        index++;
+        setTimeout(typeWriter, 50);
+      } else {
+        speakResponse(welcomeText);
+      }
+    }
+    window.onload = () => {
+      typeWriter();
+    };
+  
+    // Speech recognition setup
+    recognition.continuous = true;
+    recognition.interimResults = false;
+  
+    // Start recording
+    startBtn.addEventListener('click', () => {
+      if (!isRecording) {
+        recognition.start();
+        isRecording = true;
+        startBtn.textContent = 'Recording...';
+        startBtn.classList.add('recording');
+        stopBtn.disabled = false;
+        status.textContent = 'Recording... Speak freely, I’m listening!';
+      }
+    });
+  
+    // Stop recording
+    stopBtn.addEventListener('click', () => {
+      if (isRecording) {
+        recognition.stop();
+      }
+    });
+  
+    // Handle speech recognition results
+    recognition.onresult = (event) => {
+      let fullTranscript = '';
+      for (let i = 0; i < event.results.length; i++) {
+        fullTranscript += event.results[i][0].transcript + ' ';
+      }
+      addMessage('user-message', `You: ${fullTranscript.trim()}`);
+    };
+  
+    recognition.onend = () => {
+      isRecording = false;
+      startBtn.textContent = 'Start';
+      startBtn.classList.remove('recording');
+      stopBtn.disabled = true;
+      if (conversationState === 'initial') {
+        const lastMessage = chatBox.lastChild.textContent.replace('You: ', '');
+        processInitialResponse(lastMessage);
+      } else if (!conversationComplete) {
+        const lastMessage = chatBox.lastChild.textContent.replace('You: ', '');
+        processResponse(lastMessage);
+      }
+    };
+  
+    recognition.onerror = (event) => {
+      status.textContent = 'Error with speech recognition: ' + event.error;
+      isRecording = false;
+      startBtn.textContent = 'Start';
+      startBtn.classList.remove('recording');
+      stopBtn.disabled = true;
+    };
+  
+    // Continue conversation
+    continueBtn.addEventListener('click', () => {
+      endControls.style.display = 'none';
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+      status.textContent = 'Press "Start" to continue the conversation.';
+      const followUp = "What else can I help you add or refine for your AI agent?";
+      addMessage('ai-message', `AI: ${followUp}`);
+      speakResponse(followUp);
+      conversationComplete = false;
+      conversationState = 'refining';
+    });
+  
+    // Export knowledge base as metadata-rich JSON
+    saveBtn.addEventListener('click', () => {
+      const metadata = generateMetadata();
+      const jsonOutput = JSON.stringify(metadata, null, 2);
+      const blob = new Blob([jsonOutput], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${knowledgeBase.agentType || 'generic'}_metadata.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+  
+      addMessage('ai-message', `AI: Knowledge base exported as "${knowledgeBase.agentType || 'generic'}_metadata.json"!`);
+      status.textContent = 'File downloaded!';
+      endControls.style.display = 'none';
+      startBtn.disabled = false;
+    });
+  
+    // Generate Agent button (both initial and persistent)
+    function handleGenerateAgent() {
+      // Placeholder for generating the agent
+      addMessage('ai-message', `AI: Generating your ${knowledgeBase.agentType || 'generic'} AI agent... (This is a placeholder action)`);
+      status.textContent = 'Agent generation initiated!';
+    }
+  
+    generateAgentBtn.addEventListener('click', () => {
+      handleGenerateAgent();
+    });
+  
+    persistentGenerateAgentBtn.addEventListener('click', () => {
+      handleGenerateAgent();
+    });
+  
+    // Process initial response
+    function processInitialResponse(text) {
+      const lowerText = text.toLowerCase();
+      const tokens = lowerText.split(/\s+/);
+      let response;
+  
+      if (lowerText.includes('teach') || lowerText.includes('tutor') || lowerText.includes('academia') || 
+          lowerText.includes('education') || lowerText.includes('student') || lowerText.includes('learn')) {
+        knowledgeBase.agentType = 'teaching';
+        knowledgeBase.context = extractContext(text) || 'general education';
+        response = `Cool! It sounds like you want an AI to assist with teaching. What grade level or age group would this AI be helping?`;
+        conversationState = 'teaching_gradeLevel';
+      } else {
+        knowledgeBase.agentType = extractAgentType(text) || 'generic';
+        knowledgeBase.context = extractContext(text) || 'unspecified';
+        response = `Got it! You want a ${knowledgeBase.agentType} AI agent. Can you tell me more about what it should do or who it’s for?`;
+        conversationState = 'generic_details';
+      }
+  
+      addMessage('ai-message', `AI: ${response}`);
+      speakResponse(response);
+      botContainer.style.display = 'none';
+      status.textContent = 'Press "Start" to answer.';
+    }
+  
+    // Process subsequent responses
+    function processResponse(text) {
+      const lowerText = text.toLowerCase();
+      const tokens = lowerText.split(/\s+/);
+      let response;
+  
+      if (conversationState.startsWith('teaching_')) {
+        switch (conversationState) {
+          case 'teaching_gradeLevel':
+            knowledgeBase.details.gradeLevel = extractGradeLevel(text) || text;
+            response = `Nice! Teaching ${knowledgeBase.details.gradeLevel}. How many students would this AI typically assist?`;
+            conversationState = 'teaching_studentCount';
+            break;
+  
+          case 'teaching_studentCount':
+            knowledgeBase.details.studentCount = extractNumber(text) || text;
+            response = `Got it, ${knowledgeBase.details.studentCount} students. What subjects or topics should this AI focus on?`;
+            conversationState = 'teaching_topics';
+            break;
+  
+          case 'teaching_topics':
+            knowledgeBase.details.topics = extractTopics(text);
+            response = `Great choices: ${knowledgeBase.details.topics.join(', ')}. What’s your teaching style—like lectures, discussions, or projects?`;
+            conversationState = 'teaching_style';
+            break;
+  
+          case 'teaching_style':
+            knowledgeBase.details.teachingStyle = text;
+            response = `Cool, ${knowledgeBase.details.teachingStyle} sounds engaging! What tools or resources should the AI use or support?`;
+            conversationState = 'teaching_tools';
+            break;
+  
+          case 'teaching_tools':
+            knowledgeBase.details.tools = extractList(text);
+            response = `Using ${knowledgeBase.details.tools.join(', ')} makes sense. What’s a key challenge you’d want this AI to help with?`;
+            conversationState = 'teaching_challenges';
+            break;
+  
+          case 'teaching_challenges':
+            knowledgeBase.details.challenges = text;
+            response = `I get it, ${knowledgeBase.details.challenges} can be tough. What’s a goal you’d like this AI to achieve for your teaching?`;
+            conversationState = 'teaching_goals';
+            break;
+  
+          case 'teaching_goals':
+            knowledgeBase.details.goals = text;
+            response = `Here’s what I’ve gathered: Your teaching AI will help ${knowledgeBase.details.gradeLevel} with ${knowledgeBase.details.studentCount} students, focusing on ${knowledgeBase.details.topics.join(', ')}, using a ${knowledgeBase.details.teachingStyle} style and tools like ${knowledgeBase.details.tools.join(', ')}. It’ll tackle ${knowledgeBase.details.challenges} and aim for ${knowledgeBase.details.goals}. Ready to continue or export the knowledge base?`;
+            conversationState = 'teaching_confirmation';
+            conversationComplete = true;
+            endControls.style.display = 'flex';
+            // Show the persistent "Generate Agent" button the first time endControls appears
+            if (!hasGeneratedAgentButton) {
+              persistentControls.style.display = 'flex';
+              hasGeneratedAgentButton = true;
+            }
+            startBtn.disabled = true;
+            stopBtn.disabled = true;
+            break;
+  
+          case 'teaching_confirmation':
+            if (lowerText.includes('yes') || lowerText.includes('correct')) {
+              response = "Perfect! Ready to continue or export the knowledge base?";
+              conversationComplete = true;
+              endControls.style.display = 'flex';
+              startBtn.disabled = true;
+              stopBtn.disabled = true;
+            } else {
+              response = "Okay, what should I adjust or explore further?";
+              conversationState = 'refining';
+              conversationComplete = false;
+              endControls.style.display = 'none';
+              startBtn.disabled = false;
+            }
+            break;
+        }
+      } else {
+        switch (conversationState) {
+          case 'generic_details':
+            knowledgeBase.details.purpose = text;
+            response = `So, your ${knowledgeBase.agentType} AI will ${knowledgeBase.details.purpose}. Who will it be helping or working with?`;
+            conversationState = 'generic_target';
+            break;
+  
+          case 'generic_target':
+            knowledgeBase.details.target = text;
+            response = `Got it, it’s for ${knowledgeBase.details.target}. What’s the main task or goal you want this AI to handle?`;
+            conversationState = 'generic_goal';
+            break;
+  
+          case 'generic_goal':
+            knowledgeBase.details.goal = text;
+            response = `Here’s the plan: A ${knowledgeBase.agentType} AI to ${knowledgeBase.details.purpose} for ${knowledgeBase.details.target}, aiming to ${knowledgeBase.details.goal}. Ready to continue or export the knowledge base?`;
+            conversationState = 'generic_confirmation';
+            conversationComplete = true;
+            endControls.style.display = 'flex';
+            // Show the persistent "Generate Agent" button the first time endControls appears
+            if (!hasGeneratedAgentButton) {
+              persistentControls.style.display = 'flex';
+              hasGeneratedAgentButton = true;
+            }
+            startBtn.disabled = true;
+            stopBtn.disabled = true;
+            break;
+  
+          case 'generic_confirmation':
+            if (lowerText.includes('yes') || lowerText.includes('correct')) {
+              response = "Great! Ready to continue or export the knowledge base?";
+              conversationComplete = true;
+              endControls.style.display = 'flex';
+              startBtn.disabled = true;
+              stopBtn.disabled = true;
+            } else {
+              response = "Alright, what needs tweaking or more detail?";
+              conversationState = 'refining';
+              conversationComplete = false;
+              endControls.style.display = 'none';
+              startBtn.disabled = false;
+            }
+            break;
+        }
+      }
+  
+      if (conversationState === 'refining') {
+        if (lowerText.includes('done') || lowerText.includes('finish')) {
+          response = "Sweet! Ready to continue or export the knowledge base?";
+          conversationComplete = true;
+          endControls.style.display = 'flex';
+          startBtn.disabled = true;
+          stopBtn.disabled = true;
+        } else {
+          const intent = detectIntent(lowerText);
+          handleRefinement(intent, text);
+          response = `Added that! Anything else to refine? Say 'done' when finished.`;
+          conversationComplete = false;
+          endControls.style.display = 'none';
+          startBtn.disabled = false;
+        }
+      }
+  
+      addMessage('ai-message', `AI: ${response}`);
+      speakResponse(response);
+      if (!conversationComplete) {
+        status.textContent = 'Press "Start" to answer.';
+      }
+    }
+  
+    // Generate metadata-rich JSON for ML frameworks
+    function generateMetadata() {
+      const metadata = {
+        agent_metadata: {
+          type: knowledgeBase.agentType || 'generic',
+          context: knowledgeBase.context || 'unspecified',
+          created_at: new Date().toISOString(),
+          version: '1.0.0'
+        },
+        features: {},
+        eda: {
+          completeness: {},
+          data_types: {},
+          summary_stats: {}
+        }
+      };
+  
+      for (const [key, value] of Object.entries(knowledgeBase.details)) {
+        metadata.features[key] = {
+          value: value,
+          description: `User-provided ${key} for ${knowledgeBase.agentType} AI`,
+          source: 'voice_input'
+        };
+      }
+  
+      for (const [key, feature] of Object.entries(metadata.features)) {
+        metadata.eda.completeness[key] = feature.value ? 1.0 : 0.0;
+        metadata.eda.data_types[key] = Array.isArray(feature.value) ? 'list' : typeof feature.value;
+        if (key === 'studentCount' && typeof feature.value === 'string' && !isNaN(Number(feature.value))) {
+          metadata.eda.summary_stats[key] = {
+            mean: Number(feature.value),
+            min: Number(feature.value),
+            max: Number(feature.value),
+            count: 1
+          };
+        } else if (Array.isArray(feature.value)) {
+          metadata.eda.summary_stats[key] = {
+            count: feature.value.length,
+            unique: new Set(feature.value).size
+          };
+        }
+      }
+  
+      return metadata;
+    }
+  
+    // NLP Helpers
+    function extractAgentType(text) {
+      const types = ['teaching', 'business', 'personal', 'assistant', 'management', 'support'];
+      const lowerText = text.toLowerCase();
+      return types.find(type => lowerText.includes(type)) || 'generic';
+    }
+  
+    function extractContext(text) {
+      const contexts = ['education', 'business', 'health', 'personal', 'team'];
+      const lowerText = text.toLowerCase();
+      return contexts.find(ctx => lowerText.includes(ctx)) || null;
+    }
+  
+    function extractGradeLevel(text) {
+      const grades = text.match(/(grade\s*\d+|middle|high|elementary|college|university|\d+(th|st|nd|rd))/i);
+      return grades ? grades[0] : null;
+    }
+  
+    function extractNumber(text) {
+      const numberWords = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'twenty', 'thirty'];
+      const matches = text.match(/\d+/) || text.toLowerCase().split(' ').filter(word => numberWords.includes(word));
+      return matches[0] || null;
+    }
+  
+    function extractTopics(text) {
+      return text.split(/,|and|\s+/)
+        .filter(t => t.length > 2 && !['the', 'in', 'with', 'to', 'for'].includes(t.toLowerCase()))
+        .map(t => t.trim());
+    }
+  
+    function extractList(text) {
+      return text.split(/,|and/)
+        .map(t => t.trim())
+        .filter(t => t.length > 0);
+    }
+  
+    function detectIntent(text) {
+      if (text.includes('grade') || text.includes('level') || text.includes('age')) return 'gradeLevel';
+      if (text.includes('student') || text.includes('class')) return 'studentCount';
+      if (text.includes('topic') || text.includes('subject')) return 'topics';
+      if (text.includes('style') || text.includes('teach') || text.includes('method')) return 'teachingStyle';
+      if (text.includes('tool') || text.includes('resource')) return 'tools';
+      if (text.includes('challenge') || text.includes('problem')) return 'challenges';
+      if (text.includes('goal') || text.includes('aim')) return 'goals';
+      if (text.includes('do') || text.includes('purpose')) return 'purpose';
+      if (text.includes('who') || text.includes('target')) return 'target';
+      return 'additional';
+    }
+  
+    function handleRefinement(intent, text) {
+      if (knowledgeBase.agentType === 'teaching') {
+        switch (intent) {
+          case 'gradeLevel': knowledgeBase.details.gradeLevel = extractGradeLevel(text) || text; break;
+          case 'studentCount': knowledgeBase.details.studentCount = extractNumber(text) || text; break;
+          case 'topics': knowledgeBase.details.topics = extractTopics(text); break;
+          case 'teachingStyle': knowledgeBase.details.teachingStyle = text; break;
+          case 'tools': knowledgeBase.details.tools = extractList(text); break;
+          case 'challenges': knowledgeBase.details.challenges = text; break;
+          case 'goals': knowledgeBase.details.goals = text; break;
+          case 'additional': 
+            const key = `extra_${Object.keys(knowledgeBase.details).length + 1}`;
+            knowledgeBase.details[key] = text;
+            break;
+        }
+      } else {
+        switch (intent) {
+          case 'purpose': knowledgeBase.details.purpose = text; break;
+          case 'target': knowledgeBase.details.target = text; break;
+          case 'goals': knowledgeBase.details.goal = text; break;
+          case 'additional': 
+            const key = `extra_${Object.keys(knowledgeBase.details).length + 1}`;
+            knowledgeBase.details[key] = text;
+            break;
+        }
+      }
+    }
+  
+    // Add message to chat box
+    function addMessage(className, text) {
+      const message = document.createElement('div');
+      message.className = `chat-message ${className}`;
+      message.textContent = text;
+      chatBox.appendChild(message);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+  
+    // TTS using Web Speech API
+    function speakResponse(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1.0;
+      window.speechSynthesis.speak(utterance);
+    }
+  
+    // Dark mode toggle
+    function toggleDarkMode() {
+      document.body.classList.toggle('light');
+    }
+  
+    // Placeholder for notifications
+    function showNotifications() {
+      alert('Notifications coming soon!');
+    }
+  </script>
+
+</body>
+</html>
